@@ -1,9 +1,12 @@
 import axios from "axios";
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { MyContext } from "../../../AuthProvider/AuthProvider";
 
 const PostCard = ({ post, refetch }) => {
+  const [comment, setComment] = useState("");
+  const { _id } = post;
   const { user } = useContext(MyContext);
   const handleAddToLink = (id) => {
     const likeByUser = {
@@ -18,11 +21,33 @@ const PostCard = ({ post, refetch }) => {
         refetch();
       });
   };
+  const handleStoreComment = (e) => {
+    setComment(e.target.value);
+  };
+  const handleKeyDown = (event) => {
+    const userComment = {
+      comment,
+      postId: _id,
+      email: user.email,
+    };
+    if (event.key === "Enter") {
+      axios
+        .post(`http://localhost:5000/social-status/comment`, userComment)
+        .then((res) => {
+          if (res.data) {
+            setComment("");
+            toast.success("Comment added successfully");
+            refetch();
+          }
+        });
+    }
+  };
+
   return (
     <div>
       <div class="my-5 bg-gray-100 flex justify-center items-center">
         <div class="max-w-xs lg:max-w-lg container bg-white rounded-xl shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl">
-          <div className="text-start">
+          <div className="card-body ">
             {/* <span class="text-white text-xs font-bold rounded-lg bg-green-500 inline-block mt-4 ml-4 py-1.5 px-4 cursor-pointer">
                 Home
               </span> */}
@@ -33,9 +58,7 @@ const PostCard = ({ post, refetch }) => {
               <p>{post?.date}</p>
             </div>
             <p class="ml-4 mt-1 mb-2 text-gray-700 hover:underline cursor-pointer">
-              {post?.status?.length > 100
-                ? post.status.slice(0, 19)
-                : post.status}
+              {post.status}
             </p>
             <Link
               className="ml-4 mt-1 mb-2 text-sm text-gray-700"
@@ -51,6 +74,15 @@ const PostCard = ({ post, refetch }) => {
                 class="w-10 rounded-full"
                 src="https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_3.jpg"
                 alt="sara"
+              />
+              <input
+                value={comment}
+                onKeyDown={handleKeyDown}
+                onChange={handleStoreComment}
+                type="text"
+                name="comment"
+                placeholder="comment"
+                className="outline-0 "
               />
               <h2 class="text-gray-800 font-bold cursor-pointer"></h2>
             </div>
@@ -76,7 +108,7 @@ const PostCard = ({ post, refetch }) => {
               </div>
               <div class="flex space-x-1 items-center">
                 <button onClick={() => handleAddToLink(post._id)}>
-                  {!post?.likeByUser.includes(user?.email) ? (
+                  {post?.likeByUser?.includes(user?.email) ? (
                     <svg
                       class="h-7 w-7 bi bi-heart text-red-400 hover:text-red-400 transition duration-100 cursor-pointer"
                       xmlns="http://www.w3.org/2000/svg"
@@ -112,6 +144,9 @@ const PostCard = ({ post, refetch }) => {
                 <span>{post?.likeByUser ? post?.likeByUser?.length : 0}</span>
               </div>
             </div>
+          </div>
+          <div>
+            <p>{}</p>
           </div>
         </div>
       </div>
