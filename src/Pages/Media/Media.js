@@ -10,7 +10,9 @@ const Media = () => {
   const { data: posts = [], refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/social-status`);
+      const res = await axios.get(
+        `https://social-media-job-task-server.vercel.app/social-status`
+      );
       return res.data;
     },
   });

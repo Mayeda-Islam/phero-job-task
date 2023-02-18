@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { MyContext } from "../../../AuthProvider/AuthProvider";
 
-const PostCard = ({ post, refetch }) => {
+const PostCard = ({ post, refetch, isInDetail }) => {
   const [comment, setComment] = useState("");
   const { _id } = post;
   const { user } = useContext(MyContext);
@@ -15,7 +15,10 @@ const PostCard = ({ post, refetch }) => {
       photoURL: user.photoURL,
     };
     axios
-      .patch(`http://localhost:5000/social-status/${id}`, likeByUser)
+      .patch(
+        `https://social-media-job-task-server.vercel.app/social-status/${id}`,
+        likeByUser
+      )
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -32,7 +35,10 @@ const PostCard = ({ post, refetch }) => {
     };
     if (event.key === "Enter") {
       axios
-        .post(`http://localhost:5000/social-status/comment`, userComment)
+        .post(
+          `https://social-media-job-task-server.vercel.app/social-status/comment`,
+          userComment
+        )
         .then((res) => {
           if (res.data) {
             setComment("");
@@ -46,26 +52,28 @@ const PostCard = ({ post, refetch }) => {
   return (
     <div>
       <div class="my-5 bg-gray-100 flex justify-center items-center">
-        <div class="max-w-xs lg:max-w-lg container bg-white rounded-xl shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl">
-          <div className="card-body ">
+        <div class="max-w-xs lg:max-w-2xl container bg-white rounded-xl shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl">
+          <div className=" ">
             {/* <span class="text-white text-xs font-bold rounded-lg bg-green-500 inline-block mt-4 ml-4 py-1.5 px-4 cursor-pointer">
                 Home
               </span> */}
-            <div className="flex mr-2 justify-between items-center">
-              <h1 class="text-2xl mt-2 ml-4  font-bold text-gray-800 cursor-pointer hover:text-gray-900 transition duration-100">
+            <div className="flex p-4 justify-between items-center">
+              <h1 class="text-2xl font-bold text-gray-800 cursor-pointer hover:text-gray-900 transition duration-100">
                 {post?.title}
               </h1>
               <p>{post?.date}</p>
             </div>
-            <p class="ml-4 mt-1 mb-2 text-gray-700 hover:underline cursor-pointer">
-              {post.status}
-            </p>
-            <Link
-              className="ml-4 mt-1 mb-2 text-sm text-gray-700"
-              to={`/social-status/${post._id}`}
-            >
-              Details..
-            </Link>
+            <div className="text-start px-4">
+              <p>{post.status}</p>
+            </div>
+            {!isInDetail ? (
+              <Link
+                className="ml-4 mt-1 mb-2 text-sm text-gray-700   hover:underline cursor-pointer"
+                to={`/social-status/${post._id}`}
+              >
+                Show details
+              </Link>
+            ) : null}
           </div>
           <img class="w-full cursor-pointer" src={post.img} alt="" />
           <div class="flex p-4 justify-between">

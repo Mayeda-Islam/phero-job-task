@@ -16,7 +16,7 @@ const PostDetails = () => {
   });
   return (
     <div>
-      <PostCard refetch={refetch} post={post}></PostCard>
+      <PostCard isInDetail refetch={refetch} post={post}></PostCard>
       <PostComments comments={comments} post={post}></PostComments>
     </div>
   );

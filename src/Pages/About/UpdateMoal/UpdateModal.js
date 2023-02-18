@@ -3,15 +3,21 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-const UpdateModal = ({ abt }) => {
+const UpdateModal = ({ abt, refetch }) => {
   const { register, handleSubmit } = useForm();
 
   const handleUpdate = (data) => {
-    axios.patch(`http://localhost:5000/about/${abt._id}`, data).then((res) => {
-      if (res.data) {
-        toast.success("Your about information updated");
-      }
-    });
+    axios
+      .patch(
+        `https://social-media-job-task-server.vercel.app/about/${abt._id}`,
+        data
+      )
+      .then((res) => {
+        if (res.data) {
+          toast.success("Your about information updated");
+          refetch();
+        }
+      });
   };
   return (
     <div>
@@ -19,7 +25,7 @@ const UpdateModal = ({ abt }) => {
       <div className="modal">
         <div className="modal-box w-11/12 max-w-lg">
           <div className="relative my-4">
-            <h1 className="text-2xl ">Booking Now</h1>
+            <h1 className="text-xl ">Update Infor</h1>
             {/* <label
               htmlFor="my-modal-5"
               onClick={() => setSelectedProduct(null)}
@@ -40,8 +46,8 @@ const UpdateModal = ({ abt }) => {
                 />
               </svg>
             </label> */}
-            <label htmlFor="my-modal-5" className="btn absolute top-0 right-0">
-              Yay!
+            <label htmlFor="my-modal-5" className=" absolute top-0 right-0">
+              X
             </label>
           </div>
           <form onSubmit={handleSubmit(handleUpdate)} class="bg-white">
